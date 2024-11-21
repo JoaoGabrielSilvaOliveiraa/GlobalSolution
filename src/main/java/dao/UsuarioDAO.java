@@ -1,10 +1,10 @@
 package dao;
 
-import beans.Usuario;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import beans.Usuario;
 
 public class UsuarioDAO {
 

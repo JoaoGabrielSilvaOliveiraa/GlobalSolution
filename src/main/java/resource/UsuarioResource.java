@@ -1,8 +1,5 @@
 package resource;
 
-import beans.Usuario;
-import beans.LoginRequest; // Classe LoginRequest
-import bo.UsuarioBO;
 import conexoes.ConexaoFactory;
 
 import javax.ws.rs.GET;
@@ -12,6 +9,11 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import beans.LoginRequest;
+import beans.Usuario;
+import bo.UsuarioBO;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
