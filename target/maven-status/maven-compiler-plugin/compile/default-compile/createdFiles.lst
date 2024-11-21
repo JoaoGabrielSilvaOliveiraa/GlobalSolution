@@ -1,0 +1,8 @@
+excecoes\UsuarioException.class
+beans\Usuario.class
+model\TipoCliente.class
+beans\LoginRequest.class
+resource\UsuarioResource.class
+dao\UsuarioDAO.class
+bo\UsuarioBO.class
+conexoes\ConexaoFactory.class
