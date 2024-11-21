@@ -28,18 +28,29 @@ public class UsuarioResource {
         try {
             ConexaoFactory conexaoFactory = new ConexaoFactory();
             Connection connection = conexaoFactory.conexao(); // Obtém a conexão com o banco
-            this.usuarioBO = new UsuarioBO(connection); // Passa a conexão para o BO
+            if (connection != null) {
+                this.usuarioBO = new UsuarioBO(connection); // Passa a conexão para o BO
+            } else {
+                throw new SQLException("Não foi possível obter uma conexão com o banco de dados.");
+            }
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace(); // Tratar o erro de conexão aqui
+            // Loga mais detalhes do erro
+            System.err.println("Erro ao conectar ao banco de dados: " + e.getMessage());
+            e.printStackTrace(); // Exibe a pilha de erro no console
         }
     }
 
-    // Rota para registrar um novo usuário
     @POST
     @Path("/registro")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registrarUsuario(Usuario usuario) {
+        if (usuarioBO == null) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro interno: BO não inicializado")
+                    .build();
+        }
+
         try {
             // Verifica se o e-mail já existe
             if (usuarioBO.buscarUsuarioPorEmailESenha(usuario.getEmail(), usuario.getSenha()) != null) {
@@ -47,14 +58,35 @@ public class UsuarioResource {
                         .entity("E-mail já cadastrado.")
                         .build();
             }
-            usuarioBO.adicionarUsuario(usuario); // Chama o BO para adicionar o usuário
+
+            // Tenta adicionar o usuário
+            usuarioBO.adicionarUsuario(usuario);
             return Response.status(Response.Status.CREATED).entity("Usuário registrado com sucesso").build();
         } catch (SQLException e) {
-            e.printStackTrace(); // Tratando erros
+            e.printStackTrace(); // Imprime a stack trace para identificar detalhes do erro
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao registrar o usuário")
+                    .entity("Erro ao registrar o usuário: " + e.getMessage() + "\n" + getStackTrace(e))
+                    .build();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace(); // Imprime a stack trace para identificarmos erros de validação
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Erro de validação: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace(); // Captura qualquer outro erro não esperado
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro inesperado: " + e.getMessage())
                     .build();
         }
+    }
+
+    // Método auxiliar para obter a stack trace como string
+    private String getStackTrace(Exception e) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement element : e.getStackTrace()) {
+            sb.append(element.toString()).append("\n");
+        }
+        return sb.toString();
     }
 
     // Rota para login de usuário
@@ -63,6 +95,12 @@ public class UsuarioResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUsuario(LoginRequest loginRequest) {
+        if (usuarioBO == null) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro interno: BO não inicializado")
+                    .build();
+        }
+
         try {
             // Verificar se o usuário existe com o e-mail e senha fornecidos
             Usuario usuario = usuarioBO.buscarUsuarioPorEmailESenha(
@@ -87,6 +125,12 @@ public class UsuarioResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response listarUsuarios() {
+        if (usuarioBO == null) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro interno: BO não inicializado")
+                    .build();
+        }
+
         try {
             List<Usuario> usuarios = usuarioBO.listarUsuarios();
             return Response.ok(usuarios).build();

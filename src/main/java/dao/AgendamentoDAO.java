@@ -9,12 +9,16 @@ import java.util.List;
 
 public class AgendamentoDAO {
 
+	
+	//Conexão com o banco
     private Connection connection;
 
     public AgendamentoDAO(Connection connection) {
         this.connection = connection;
     }
 
+    
+    //Consulta pra adicionar agendamento
     public void adicionarAgendamento(Agendamento agendamento) throws SQLException {
         String sql = "INSERT INTO agendamentos (data_hora, id_usuario) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -24,6 +28,7 @@ public class AgendamentoDAO {
         }
     }
 
+    //Listar todos os agendamentos
     public List<Agendamento> listarAgendamentos() throws SQLException {
         List<Agendamento> agendamentos = new ArrayList<>();
         String sql = "SELECT * FROM agendamentos";
@@ -39,7 +44,7 @@ public class AgendamentoDAO {
         }
         return agendamentos;
     }
-
+//Atualizar o agendamento caso necessario
     public void atualizarAgendamento(Agendamento agendamento) throws SQLException {
         String sql = "UPDATE agendamentos SET data_hora = ?, id_usuario = ? WHERE id_agendamento = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -50,6 +55,7 @@ public class AgendamentoDAO {
         }
     }
 
+    //remover o agendamento, em caso de cancelamento
     public void removerAgendamento(int idAgendamento) throws SQLException {
         String sql = "DELETE FROM agendamentos WHERE id_agendamento = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -58,6 +64,7 @@ public class AgendamentoDAO {
         }
     }
 
+    //Buscar o Agendamento por ID (especificamente pra pegar os IDs do usuario logado no momento)
     public Agendamento buscarAgendamentoPorId(int idAgendamento) throws SQLException {
         String sql = "SELECT * FROM agendamentos WHERE id_agendamento = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

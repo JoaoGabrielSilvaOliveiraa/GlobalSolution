@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+//Caminho do agendamento
+
 @Path("/agendamentos")
 public class AgendamentoResource {
 
@@ -25,6 +27,8 @@ public class AgendamentoResource {
         }
     }
 
+    
+    //Método POST para criar o agendamento com tratamento de Exception basico 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -38,6 +42,7 @@ public class AgendamentoResource {
         }
     }
 
+    //Um get para listar os agendamentos
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response listarAgendamentos() {
@@ -50,6 +55,7 @@ public class AgendamentoResource {
         }
     }
    
+    //Um get para listar os agendamentos POR ID, nesse caso será utilizado pra mostrar no front os agendamentos do usuario logado
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -67,6 +73,7 @@ public class AgendamentoResource {
     }
 
 
+    	//Deletar por ID, caso o usuario queira cancelar o agendamento.
     @DELETE
     @Path("/{id}")
     public Response deletarAgendamento(@PathParam("id") int idAgendamento) {
