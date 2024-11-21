@@ -39,6 +39,12 @@ public class UsuarioResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response registrarUsuario(Usuario usuario) {
         try {
+            // Verifica se o e-mail já existe
+            if (usuarioBO.buscarUsuarioPorEmailESenha(usuario.getEmail(), usuario.getSenha()) != null) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("E-mail já cadastrado.")
+                        .build();
+            }
             usuarioBO.adicionarUsuario(usuario); // Chama o BO para adicionar o usuário
             return Response.status(Response.Status.CREATED).entity("Usuário registrado com sucesso").build();
         } catch (SQLException e) {
