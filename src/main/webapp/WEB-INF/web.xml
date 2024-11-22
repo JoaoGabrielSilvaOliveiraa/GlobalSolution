@@ -12,6 +12,17 @@
         <welcome-file>default.htm</welcome-file>
     </welcome-file-list>
 
+    <!-- Filtro CORS -->
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>filters.CorsFilter</filter-class> <!-- Caminho para o filtro CORS -->
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern> <!-- Alterado para /* para interceptar todas as requisições -->
+    </filter-mapping>
+
     <!-- Configuração do Servlet para JAX-RS (Jersey) -->
     <servlet>
         <servlet-name>jersey-servlet</servlet-name>
