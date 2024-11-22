@@ -5,19 +5,26 @@ import java.time.LocalDateTime;
 public class Agendamento {
     private int idAgendamento;
     private LocalDateTime dataHora;
-    private int idUsuario; // Relacionamento com o usuário
+    private int idUsuario;
+    private String emailUsuario;  // Campo para o email do usuário
 
-    // Construtor vazio
+    // Construtor padrão
     public Agendamento() {}
 
-    // Construtor com parâmetros
+    // Construtor com data e email
+    public Agendamento(LocalDateTime dataHora, String emailUsuario) {
+        this.dataHora = dataHora;
+        this.emailUsuario = emailUsuario;
+    }
+
+    // Construtor completo com idAgendamento, dataHora, idUsuario
     public Agendamento(int idAgendamento, LocalDateTime dataHora, int idUsuario) {
         this.idAgendamento = idAgendamento;
         this.dataHora = dataHora;
         this.idUsuario = idUsuario;
     }
 
-    // Getters e Setters
+    // Getters e setters
     public int getIdAgendamento() {
         return idAgendamento;
     }
@@ -40,5 +47,13 @@ public class Agendamento {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public String getEmailUsuario() {
+        return emailUsuario;
+    }
+
+    public void setEmailUsuario(String emailUsuario) {
+        this.emailUsuario = emailUsuario;
     }
 }

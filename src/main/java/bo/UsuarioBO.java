@@ -53,4 +53,5 @@ public class UsuarioBO {
         }
         return usuarioDAO.buscarUsuarioPorEmailESenha(email, senha);
     }
+    
 }
