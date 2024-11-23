@@ -4,8 +4,11 @@ import conexoes.ConexaoFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -17,6 +20,9 @@ import bo.UsuarioBO;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+
+
+
 
 @Path("/usuarios")
 public class UsuarioResource {
@@ -140,6 +146,82 @@ public class UsuarioResource {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao listar os usuários")
+                    .build();
+        }
+    }
+    
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removerUsuario(@PathParam("id") int id) {
+        if (usuarioBO == null) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro interno: BO não inicializado")
+                    .build();
+        }
+
+        try {
+            usuarioBO.removerUsuario(id);
+            return Response.ok("Usuário removido com sucesso").build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Erro: " + e.getMessage())
+                    .build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao remover o usuário: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro inesperado: " + e.getMessage())
+                    .build();
+        }
+    }
+    
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response atualizarUsuario(@PathParam("id") int id, Usuario usuarioAtualizado) {
+        if (usuarioBO == null) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro interno: BO não inicializado")
+                    .build();
+        }
+
+        try {
+            // Verificar se o usuário existe no banco
+            Usuario usuarioExistente = usuarioBO.buscarUsuarioPorId(id);
+
+            if (usuarioExistente == null) {
+                // Se o usuário não existe, retornar erro 404
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("Usuário não encontrado")
+                        .build();
+            }
+
+            // Atualizar os dados do usuário
+            usuarioExistente.setEmail(usuarioAtualizado.getEmail()); // Atualiza o e-mail
+            usuarioExistente.setSenha(usuarioAtualizado.getSenha()); // Atualiza a senha
+
+            // Chama o método do BO para atualizar no banco de dados
+            usuarioBO.atualizarUsuario(usuarioExistente);
+
+            // Retornar a resposta de sucesso
+            return Response.status(Response.Status.OK)
+                    .entity("Usuário atualizado com sucesso")
+                    .build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao atualizar o usuário: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro inesperado: " + e.getMessage())
                     .build();
         }
     }

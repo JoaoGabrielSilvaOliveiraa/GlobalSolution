@@ -15,6 +15,32 @@ public class UsuarioDAO {
         this.connection = connection;
     }
     
+    public Usuario buscarUsuarioPorId(int idCadastro) throws SQLException {
+        String sql = "SELECT * FROM usuarios WHERE id_cadastro = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, idCadastro);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                // Criação do objeto Usuario a partir dos dados do banco
+                Usuario usuario = new Usuario();
+                usuario.setIdCadastro(rs.getInt("id_cadastro"));
+                usuario.setNome(rs.getString("nome"));
+                usuario.setEmail(rs.getString("email"));
+                usuario.setSenha(rs.getString("senha"));
+                
+                return usuario; // Retorna o usuário encontrado
+            } else {
+                return null; // Retorna null se o usuário não for encontrado
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Erro ao buscar usuário por ID: " + e.getMessage(), e);
+        }
+    }
+
+ 
+
     
 
     public void adicionarUsuario(Usuario usuario) throws SQLException {
@@ -22,7 +48,12 @@ public class UsuarioDAO {
         connection.setAutoCommit(false);
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            System.out.println("Preparando o insert...");
+            System.out.println("Preparando para adicionar o usuário com os seguintes dados:");
+            System.out.println("Nome: " + usuario.getNome());
+            System.out.println("Documento: " + usuario.getDocumento());
+            System.out.println("Email: " + usuario.getEmail());
+            System.out.println("Telefone: " + usuario.getTelefone());
+
             stmt.setString(1, usuario.getNome());
             stmt.setString(2, usuario.getDocumento());
             stmt.setString(3, usuario.getEmail());
@@ -33,20 +64,18 @@ public class UsuarioDAO {
             stmt.setString(8, usuario.getEstado());
             stmt.setString(9, usuario.getSenha());
 
-            // Log para verificar a execução da query
-            System.out.println("Executando o insert: " + stmt.toString());
-
             stmt.executeUpdate();
             connection.commit();
-            System.out.println("Usuário inserido com sucesso.");
+            System.out.println("Usuário adicionado com sucesso.");
         } catch (SQLException e) {
             connection.rollback();
-            System.err.println("Erro ao inserir usuário: " + e.getMessage());
+            System.err.println("Erro ao adicionar usuário: " + e.getMessage());
             throw e;
         } finally {
             connection.setAutoCommit(true);
         }
     }
+
 
     // Fazendo a listagem de todos usuarios caso seja necessário 
     public List<Usuario> listarUsuarios() throws SQLException {

@@ -1,10 +1,15 @@
 package dao;
 
 import beans.Contato;
+import beans.Usuario;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContatoDAO {
     private Connection connection;
@@ -21,5 +26,21 @@ public class ContatoDAO {
             stmt.setString(3, contato.getComentario());
             stmt.executeUpdate();
         }
+    }
+    
+    public List<Contato> listarContatos() throws SQLException {
+        List<Contato> contatos = new ArrayList<>();
+        String sql = "SELECT * FROM Contatos";
+
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+            	contatos.add(new Contato( 
+            		    rs.getString("email"), 
+            		    rs.getString("telefone"), 
+            		    rs.getString("comentario")
+            		));
+            }
+        }
+        return contatos;
     }
 }

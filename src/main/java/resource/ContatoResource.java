@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 @Path("/contatos")
 public class ContatoResource {
@@ -39,6 +40,21 @@ public class ContatoResource {
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Erro: " + e.getMessage()).build();
+        }
+    }
+
+    // Método para listar todos os contatos
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listarContatos() {
+        try {
+            // Obtém a lista de contatos do BO
+            List<Contato> contatos = contatoBO.listarContatos();
+            return Response.status(Response.Status.OK).entity(contatos).build();
+        } catch (SQLException e) {
+            // Retorna erro 500 em caso de problemas no banco de dados
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar contatos: " + e.getMessage()).build();
         }
     }
 }

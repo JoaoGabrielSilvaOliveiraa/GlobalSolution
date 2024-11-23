@@ -14,7 +14,18 @@ public class Contato {
         this.email = email;
     }
 
-    public String getTelefone() {
+    public Contato() {
+		super();
+	}
+
+	public Contato(String email, String telefone, String comentario) {
+		super();
+		this.email = email;
+		this.telefone = telefone;
+		this.comentario = comentario;
+	}
+
+	public String getTelefone() {
         return telefone;
     }
 

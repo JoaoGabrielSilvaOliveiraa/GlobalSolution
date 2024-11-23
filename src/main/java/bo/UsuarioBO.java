@@ -54,4 +54,13 @@ public class UsuarioBO {
         return usuarioDAO.buscarUsuarioPorEmailESenha(email, senha);
     }
     
+    public Usuario buscarUsuarioPorId(int idCadastro) throws SQLException {
+        if (idCadastro <= 0) {
+            throw new IllegalArgumentException("ID de cadastro inválido.");
+        }
+        return usuarioDAO.buscarUsuarioPorId(idCadastro);
+    }
+    
+    
+    
 }
